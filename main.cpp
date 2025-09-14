@@ -8,6 +8,8 @@ int main() {
     unsigned int mainWindowWidth =  800;
     sf::RenderWindow mainWindow(sf::VideoMode{mainWindowWidth, mainWindowHeight}, "Sudoku Homepage");
 
+    Sudoku sudoku;
+
     //Exit Button
     Button exit("Textures/exit.png");
     exit.setScale({0.05f, 0.05f});
@@ -47,7 +49,7 @@ int main() {
             //Opens new window if start button was pressed
             else if (start.selected(mainWindow)) {
                 mainWindow.setVisible(false);
-                sudoku(mainWindow);
+                sudoku.printBoard(mainWindow);
             }
             else if (score.selected(mainWindow)) {
                 mainWindow.setVisible(false);

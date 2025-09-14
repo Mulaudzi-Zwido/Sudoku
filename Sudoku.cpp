@@ -4,7 +4,7 @@
 
 #include "Sudoku.h"
 
-void sudoku(sf::RenderWindow& mainW) {
+void Sudoku::printBoard(sf::RenderWindow &mainW) {
     sf::RenderWindow window(sf::VideoMode{800, 800}, "Sudoku");
 
     window.setFramerateLimit(60);

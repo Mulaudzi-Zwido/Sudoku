@@ -7,6 +7,9 @@
 
 #include "Button.h"
 
-void sudoku(sf::RenderWindow& mainW);
+class Sudoku {
+public:
+    void printBoard(sf::RenderWindow& mainW);
+};
 
 #endif //SUDOKU_SUDOKU_H
