@@ -40,9 +40,11 @@ void Button::setPosition(const sf::Vector2f pos) {
 
 bool Button::selected(const sf::RenderWindow& window) const {
     sf::Vector2i cursor = sf::Mouse::getPosition(window);
+    sf::Vector2f worldCursor = window.mapPixelToCoords(cursor);
+
     sf::FloatRect bound = buttonIcon.getGlobalBounds();
 
-    bool cursorInButton = bound.contains(static_cast<sf::Vector2f>(cursor));
+    bool cursorInButton = bound.contains(worldCursor);
     if (!cursorInButton)
         return false;
 
