@@ -12,18 +12,23 @@
 class Sudoku {
 private:
     int level {1};
-    int ** board;
-    int** boardValues;
-    std::vector<sf::RectangleShape> blocks;
+
+    sf::Font font;
+    std::vector<sf::Text> texts;
+    sf::Text line;
+    std::vector<std::vector<int>> board;
+    std::vector<std::vector<int>> boardValues;
+    std::vector<std::vector<sf::RectangleShape>>blocks;
+
+    void generateBoard(); // Fills boardValues with the complete sudoku board values
+    bool fillGrid();
+    bool valid(int row, int col, int value) const;
+    void generateWindowBoard(sf::RenderWindow& parentWindow);
+
+    class FailedToLoadFont{};
 public:
     Sudoku();
-    ~Sudoku();
-    void fillBoardValues(); // Fills boardValues with the complete sudoku board values
-    void reinitializeRow(int row);
-    bool rowDuplicates(int column, int value) const;
-    bool colDuplicates(int row, int value) const;
-    bool boxDuplicates(int row, int col, int value) const;
-    void fillIncompleteBoard();
+    ~Sudoku() = default;
     void printBoard(sf::RenderWindow& mainW); //Prints the sudoku board as an interactive window
 };
 
