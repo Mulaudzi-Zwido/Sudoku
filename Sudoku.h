@@ -12,6 +12,7 @@
 class Sudoku {
 private:
     int level {1};
+    int errors{0};
 
     sf::Font font;
     std::vector<sf::Text> texts;
@@ -25,8 +26,9 @@ private:
     bool valid(int row, int col, int value) const;
     void generateWindowBoard(sf::RenderWindow& parentWindow);
 
-    bool correctNum(int row, int col, int val) const;
+    bool correctNum(int row, int col, int val);
     bool userInput(const sf::RenderWindow& window);
+    void resetBoard();
 
     class FailedToLoadFont{};
 public:

@@ -6,6 +6,9 @@
 #include <random>
 #include <algorithm>
 #include <cstdlib>
+#include <chrono>
+#include <bits/this_thread_sleep.h>
+#include <SFML/System.hpp>
 
 Sudoku::Sudoku() {
     board = std::vector<std::vector<int>>(9, std::vector<int>(9, 0));
@@ -18,6 +21,13 @@ Sudoku::Sudoku() {
         std::exit(EXIT_FAILURE);
     }
 }
+
+void Sudoku::resetBoard() {
+    board = std::vector<std::vector<int>>(9, std::vector<int>(9, 0));
+    boardValues = std::vector<std::vector<int>>(9, std::vector<int>(9, 0));
+    errors = 0;
+}
+
 
 void Sudoku::generateWindowBoard(sf::RenderWindow& parentWindow) {
     sf::Vector2f size = static_cast<sf::Vector2f>(parentWindow.getSize());
@@ -187,9 +197,10 @@ bool Sudoku::fillGrid() {
     return false;
 }
 
-bool Sudoku::correctNum(int row, int col, int val) const {
+bool Sudoku::correctNum(int row, int col, int val) {
     if (boardValues[row][col] == val)
         return true;
+    errors += 1;
     return false;
 }
 
@@ -300,10 +311,35 @@ void Sudoku::printBoard(sf::RenderWindow &mainW) {
             }
         }
 
+        if (errors == 3) {
+            sf::Texture gameOverTexture;
+            gameOverTexture.loadFromFile("Textures/gameOver.png");
+            sf::Sprite gameOverImage;
+            gameOverImage.setTexture(gameOverTexture);
+            gameOverImage.setScale(0.15f, 0.15f);
+            gameOverImage.setPosition(window.getSize().x/6.0f, window.getSize().y/2.85f);
+            window.draw(gameOverImage);
+
+            for (auto text : texts) {
+                if (text.getString() != "0")
+                    window.draw(text);
+            }
+
+            window.draw(line);
+
+            window.display();
+            resetBoard();
+            auto delay = std::chrono::seconds(2);
+            std::this_thread::sleep_for(delay);
+            mainW.setVisible(true);
+            window.close();
+        }
+
         for (auto text : texts) {
             if (text.getString() != "0")
                 window.draw(text);
         }
+
         window.draw(line);
         window.display();
     }
