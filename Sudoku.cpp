@@ -28,7 +28,7 @@ void Sudoku::generateWindowBoard(sf::RenderWindow& parentWindow) {
     blockSize.x = size.x / 9;
     blockSize.y = size.y / 9;
 
-    blocks = std::vector<std::vector<sf::RectangleShape>>(9, std::vector<sf::RectangleShape>(9, sf::RectangleShape(blockSize)));
+    blocks = std::vector(9, std::vector<sf::RectangleShape>(9, sf::RectangleShape(blockSize)));
 
     for (int row = 0; row < 9; ++row) {
         for (int col = 0; col < 9; ++col) {
@@ -193,62 +193,77 @@ bool Sudoku::correctNum(int row, int col, int val) const {
     return false;
 }
 
-void Sudoku::userInput() {
+bool Sudoku::userInput(const sf::RenderWindow& window) {
     for (int i = 0; i < 9; ++i) {
         for (int j = 0; j < 9; ++j) {
             sf::Mouse cursor;
             sf::FloatRect block = blocks[i][j].getGlobalBounds();
-            if (block.contains(static_cast<sf::Vector2f>(cursor.getPosition()))) {
+            sf::Vector2i cursorPos = cursor.getPosition(window);
+            sf::Vector2f worldPos = window.mapPixelToCoords(cursorPos);
+
+            if (block.contains(worldPos)) {
                 if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
                     if (correctNum(i,j, 1)) {
                         board[i][j] = 1;
+                        return true;
                     }
                 }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
                     if (correctNum(i,j, 2)) {
                         board[i][j] = 2;
+                        return true;
                     }
                 }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)) {
                     if (correctNum(i,j, 3)) {
                         board[i][j] = 3;
+                        return true;
                     }
                 }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
                     if (correctNum(i,j, 4)) {
                         board[i][j] = 4;
+                        return true;
                     }
                 }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5)) {
                     if (correctNum(i,j, 5)) {
                         board[i][j] = 5;
+                        std::cout << "Correctly pressed: " << 5 << std::endl;
+                    } else {
+                        std::cout << "Incorrectly pressed: " << 5 << std::endl;
                     }
                 }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num6)) {
                     if (correctNum(i,j, 6)) {
                         board[i][j] = 6;
+                        return true;
                     }
                 }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num7)) {
                     if (correctNum(i,j, 7)) {
                         board[i][j] = 7;
+                        return true;
                     }
                 }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num8)) {
                     if (correctNum(i,j, 8)) {
                         board[i][j] = 8;
+                        return true;
                     }
                 }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num9)) {
                     if (correctNum(i,j, 9)) {
                         board[i][j] = 9;
+                        return true;
                     }
                 }
             }
         }
     }
-}
 
+    return false;
+}
 
 void Sudoku::printBoard(sf::RenderWindow &mainW) {
     sf::RenderWindow window(sf::VideoMode{800, 800}, "Sudoku");
@@ -269,9 +284,16 @@ void Sudoku::printBoard(sf::RenderWindow &mainW) {
             if (gameEvent.type == sf::Event::Closed) {
                 mainW.setVisible(true);
                 window.close();
+            } else if (gameEvent.type == sf::Event::KeyPressed) {
+                bool updated = userInput(window);
+                if (updated) {
+                    generateWindowBoard(window);
+                }
             }
         }
+
         window.clear(sf::Color::White);
+
         for (auto& blockV : blocks) {
             for (auto& block : blockV) {
                 window.draw(block);

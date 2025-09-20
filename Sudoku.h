@@ -26,7 +26,7 @@ private:
     void generateWindowBoard(sf::RenderWindow& parentWindow);
 
     bool correctNum(int row, int col, int val) const;
-    void userInput();
+    bool userInput(const sf::RenderWindow& window);
 
     class FailedToLoadFont{};
 public:
