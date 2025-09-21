@@ -25,6 +25,9 @@ private:
     bool valid(int row, int col, int value) const;
     void generateWindowBoard(sf::RenderWindow& parentWindow);
 
+    bool correctNum(int row, int col, int val) const;
+    void userInput();
+
     class FailedToLoadFont{};
 public:
     Sudoku();

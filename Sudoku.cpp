@@ -187,6 +187,69 @@ bool Sudoku::fillGrid() {
     return false;
 }
 
+bool Sudoku::correctNum(int row, int col, int val) const {
+    if (boardValues[row][col] == val)
+        return true;
+    return false;
+}
+
+void Sudoku::userInput() {
+    for (int i = 0; i < 9; ++i) {
+        for (int j = 0; j < 9; ++j) {
+            sf::Mouse cursor;
+            sf::FloatRect block = blocks[i][j].getGlobalBounds();
+            if (block.contains(static_cast<sf::Vector2f>(cursor.getPosition()))) {
+                if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num1)) {
+                    if (correctNum(i,j, 1)) {
+                        board[i][j] = 1;
+                    }
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num2)) {
+                    if (correctNum(i,j, 2)) {
+                        board[i][j] = 2;
+                    }
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num3)) {
+                    if (correctNum(i,j, 3)) {
+                        board[i][j] = 3;
+                    }
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num4)) {
+                    if (correctNum(i,j, 4)) {
+                        board[i][j] = 4;
+                    }
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5)) {
+                    if (correctNum(i,j, 5)) {
+                        board[i][j] = 5;
+                    }
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num6)) {
+                    if (correctNum(i,j, 6)) {
+                        board[i][j] = 6;
+                    }
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num7)) {
+                    if (correctNum(i,j, 7)) {
+                        board[i][j] = 7;
+                    }
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num8)) {
+                    if (correctNum(i,j, 8)) {
+                        board[i][j] = 8;
+                    }
+                }
+                else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num9)) {
+                    if (correctNum(i,j, 9)) {
+                        board[i][j] = 9;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 void Sudoku::printBoard(sf::RenderWindow &mainW) {
     sf::RenderWindow window(sf::VideoMode{800, 800}, "Sudoku");
 
