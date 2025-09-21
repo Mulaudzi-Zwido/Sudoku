@@ -20,32 +20,50 @@ Sudoku::Sudoku() {
 }
 
 void Sudoku::generateWindowBoard(sf::RenderWindow& parentWindow) {
-
     sf::Vector2f size = static_cast<sf::Vector2f>(parentWindow.getSize());
     size.x *= 0.9f;
     size.y *= 0.9f;
 
     sf::Vector2f blockSize;
-    blockSize.x = size.x/9;
-    blockSize.y = size.y/9;
-
-    sf::Vector2f blockPos;
-    blockPos.x = size.x/9;
-    blockPos.y = size.y/9;
+    blockSize.x = size.x / 9;
+    blockSize.y = size.y / 9;
 
     blocks = std::vector<std::vector<sf::RectangleShape>>(9, std::vector<sf::RectangleShape>(9, sf::RectangleShape(blockSize)));
 
-    for (int i = 0; i < 9; ++i) {
-        for (int j = 0; j < 9; ++j) {
-            blocks[i][j].setPosition(sf::Vector2f{blockPos.x * (i + 0.5f), blockPos.y * (j + 0.95f)});
+    for (int row = 0; row < 9; ++row) {
+        for (int col = 0; col < 9; ++col) {
+            blocks[row][col].setPosition(sf::Vector2f{
+                blockSize.x * (col + 0.5f),
+                blockSize.y * (row + 0.7f)
+            });
+            blocks[row][col].setFillColor(sf::Color{237, 237, 237, 255});
+            blocks[row][col].setOutlineColor(sf::Color::Black);
+            blocks[row][col].setOutlineThickness(1.f);
         }
     }
 
-    for (auto& blockV : blocks) {
-        for (auto& block : blockV) {
-            block.setFillColor(sf::Color{237, 237, 237, 255});
-            block.setOutlineColor(sf::Color::Black);
-            block.setOutlineThickness(1.f);
+    // Clear previous texts
+    texts.clear();
+
+    for (int row = 0; row < 9; ++row) {
+        for (int col = 0; col < 9; ++col) {
+            sf::Text text;
+            text.setFont(font);
+            text.setFillColor(sf::Color::Black);
+            text.setCharacterSize(50);
+
+            if (board[row][col] != 0)
+                text.setString(std::to_string(board[row][col]));
+            else
+                text.setString("");
+
+            // Center the text in the block
+            sf::Vector2f pos = blocks[row][col].getPosition();
+            sf::FloatRect bounds = text.getLocalBounds();
+            text.setOrigin(bounds.left + bounds.width / 2.f, bounds.top + bounds.height / 2.f);
+            text.setPosition(pos.x + blockSize.x / 2.f, pos.y + blockSize.y / 2.f);
+
+            texts.push_back(text);
         }
     }
 }
@@ -180,7 +198,7 @@ void Sudoku::printBoard(sf::RenderWindow &mainW) {
     line.setFont(font);
     line.setString("Level: " + std::to_string(level));
     line.setPosition(window.getSize().x/8.0f, 0.0f);
-    line.setCharacterSize(50);
+    line.setCharacterSize(40);
     line.setFillColor(sf::Color::Black);
     while (window.isOpen()) {
         sf::Event gameEvent;
@@ -195,6 +213,11 @@ void Sudoku::printBoard(sf::RenderWindow &mainW) {
             for (auto& block : blockV) {
                 window.draw(block);
             }
+        }
+
+        for (auto text : texts) {
+            if (text.getString() != "0")
+                window.draw(text);
         }
         window.draw(line);
         window.display();
