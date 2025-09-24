@@ -28,6 +28,100 @@ void Sudoku::resetBoard() {
     errors = 0;
 }
 
+void makeBox(sf::VertexArray& box, int row, int col, const std::vector<std::vector<sf::RectangleShape>>& blocks) {
+    box[0].position = blocks[row][col].getPosition();
+    box[4].position = blocks[row][col].getPosition();
+
+    box[1].position.y = blocks[row][col].getPosition().y;
+    box[3].position.x = blocks[row][col].getPosition().x;
+
+    int lastRow = row + 3;
+    int lastCol = col + 3;
+    int blockXSize =  blocks[0][0].getSize().x;
+    int blockYSize =  blocks[0][0].getSize().y;
+    if (lastRow == 9) {
+        lastRow -= 1;
+        box[2].position.y = blocks[lastRow][col].getPosition().y + static_cast<float>(blockYSize);
+        box[3].position.y = blocks[lastRow][col].getPosition().y + static_cast<float>(blockYSize);
+    }else {
+        box[2].position.y = blocks[lastRow][col].getPosition().y;
+        box[3].position.y = blocks[lastRow][col].getPosition().y;
+    }
+
+    if (lastCol== 9) {
+        lastCol -= 1;
+        box[1].position.x = blocks[row][lastCol].getPosition().x + static_cast<float>(blockXSize);
+        box[2].position.x = blocks[row][lastCol].getPosition().x + static_cast<float>(blockXSize);
+    } else {
+        box[1].position.x = blocks[row][lastCol].getPosition().x;
+        box[2].position.x = blocks[row][lastCol].getPosition().x;
+    }
+}
+
+void Sudoku::createBoxOutline() {
+    //Box 1
+    {
+        sf::VertexArray box(sf::LineStrip, 5);
+        makeBox(box, 0,0, blocks);
+        boxLines.push_back(box);
+    }
+    //Box 2
+    {
+         sf::VertexArray box(sf::LineStrip, 5);
+         makeBox(box,0,3, blocks);
+         boxLines.push_back(box);
+    }
+    //Box3
+    {
+         sf::VertexArray box(sf::LineStrip, 5);
+         makeBox(box,0,6, blocks);
+         boxLines.push_back(box);
+    }
+    //Box4
+    {
+         sf::VertexArray box(sf::LineStrip, 5);
+         makeBox(box,3,0, blocks);
+         boxLines.push_back(box);
+    }
+    //Box5
+    {
+         sf::VertexArray box(sf::LineStrip, 5);
+         makeBox(box,3,3, blocks);
+         boxLines.push_back(box);
+    }
+    //Box6
+    {
+         sf::VertexArray box(sf::LineStrip, 5);
+         makeBox(box,3,6, blocks);
+         boxLines.push_back(box);
+    }
+    //Box7
+    {
+         sf::VertexArray box(sf::LineStrip, 5);
+         makeBox(box, 6,0, blocks);
+         boxLines.push_back(box);
+    }
+    //Box8
+    {
+         sf::VertexArray box(sf::LineStrip, 5);
+         makeBox(box, 6,3, blocks);
+         boxLines.push_back(box);
+    }
+    //Box9
+    {
+         sf::VertexArray box(sf::LineStrip, 5);
+         makeBox(box, 6,6, blocks);
+         boxLines.push_back(box);
+    }
+
+    for (auto& box : boxLines) {
+        box[0].color = sf::Color::Black;
+        box[1].color = sf::Color::Black;
+        box[2].color = sf::Color::Black;
+        box[3].color = sf::Color::Black;
+        box[4].color = sf::Color::Black;
+    }
+}
 
 void Sudoku::generateWindowBoard(sf::RenderWindow& parentWindow) {
     sf::Vector2f size = static_cast<sf::Vector2f>(parentWindow.getSize());
@@ -46,11 +140,13 @@ void Sudoku::generateWindowBoard(sf::RenderWindow& parentWindow) {
                 blockSize.x * (col + 0.5f),
                 blockSize.y * (row + 0.7f)
             });
-            blocks[row][col].setFillColor(sf::Color{237, 237, 237, 255});
-            blocks[row][col].setOutlineColor(sf::Color::Black);
+            blocks[row][col].setFillColor(sf::Color::White);
+            blocks[row][col].setOutlineColor(sf::Color{237,237,237,255});
             blocks[row][col].setOutlineThickness(1.f);
         }
     }
+
+    createBoxOutline();
 
     // Clear previous texts
     texts.clear();
@@ -197,6 +293,10 @@ bool Sudoku::fillGrid() {
     return false;
 }
 
+void Sudoku::setLevel(int lv) {
+    level = lv;
+}
+
 bool Sudoku::correctNum(int row, int col, int val) {
     if (boardValues[row][col] == val)
         return true;
@@ -284,6 +384,8 @@ void Sudoku::printBoard(sf::RenderWindow &mainW) {
     generateBoard();
     generateWindowBoard(window);
 
+    std::cout << "Boxes: " << boxLines.size() << "\n";
+
     line.setFont(font);
     line.setString("Level: " + std::to_string(level));
     line.setPosition(window.getSize().x/8.0f, 0.0f);
@@ -335,12 +437,39 @@ void Sudoku::printBoard(sf::RenderWindow &mainW) {
             window.close();
         }
 
+        if (board == boardValues) {
+            sf::Texture winTexture;
+            winTexture.loadFromFile("Textures/win.png");
+            sf::Sprite winImage;
+            winImage.setTexture(winTexture);
+            winImage.setScale(0.15f, 0.15f);
+            winImage.setPosition(window.getSize().x/6.0f, window.getSize().y/2.85f);
+            window.draw(winImage);
+
+            for (auto text : texts) {
+                if (text.getString() != "0")
+                    window.draw(text);
+            }
+
+            window.draw(line);
+
+            window.display();
+            resetBoard();
+            auto delay = std::chrono::seconds(2);
+            std::this_thread::sleep_for(delay);
+            mainW.setVisible(true);
+            window.close();
+        }
+
         for (auto text : texts) {
             if (text.getString() != "0")
                 window.draw(text);
         }
 
         window.draw(line);
+        for (const auto& box : boxLines) {
+            window.draw(box);
+        }
         window.display();
     }
 }

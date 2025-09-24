@@ -20,11 +20,13 @@ private:
     std::vector<std::vector<int>> board;
     std::vector<std::vector<int>> boardValues;
     std::vector<std::vector<sf::RectangleShape>>blocks;
+    std::vector<sf::VertexArray> boxLines;
 
     void generateBoard(); // Fills boardValues with the complete sudoku board values
     bool fillGrid();
     bool valid(int row, int col, int value) const;
     void generateWindowBoard(sf::RenderWindow& parentWindow);
+    void createBoxOutline();
 
     bool correctNum(int row, int col, int val);
     bool userInput(const sf::RenderWindow& window);
@@ -35,6 +37,7 @@ public:
     Sudoku();
     ~Sudoku() = default;
     void printBoard(sf::RenderWindow& mainW); //Prints the sudoku board as an interactive window
+    void setLevel(int lv);
 };
 
 #endif //SUDOKU_SUDOKU_H
