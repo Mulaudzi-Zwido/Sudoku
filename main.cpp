@@ -2,12 +2,14 @@
 #include "Button.h"
 #include "Sudoku.h"
 #include "ScoreBoard.h"
+#include <filesystem>
 
 int main() {
     unsigned int mainWindowHeight =  800;
     unsigned int mainWindowWidth =  800;
     sf::RenderWindow mainWindow(sf::VideoMode{mainWindowWidth, mainWindowHeight}, "Sudoku Homepage");
 
+    std::filesystem::create_directories("GameFiles");
     Sudoku sudoku;
 
     //Exit Button
@@ -48,12 +50,15 @@ int main() {
             }
             //Opens new window if start button was pressed
             else if (start.selected(mainWindow)) {
+                sudoku.setLevel(getLevelFromFile("GameFiles/level.txt"));
                 mainWindow.setVisible(false);
                 sudoku.printBoard(mainWindow);
+                saveRecordsToFile(sudoku.getLevel(), sudoku.getTime(), sudoku.getStatus(), "GameFiles/records.txt");
+                saveLevelToFile("GameFiles/level.txt", sudoku.getLevel());
             }
             else if (score.selected(mainWindow)) {
                 mainWindow.setVisible(false);
-                scoreBoard(mainWindow);
+                scoreBoard(mainWindow, sudoku);
             }
         }
 

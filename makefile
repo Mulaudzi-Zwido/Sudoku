@@ -13,6 +13,8 @@ all: $(OBJECTS)
 
 run:
 	./$(TARGET)
+runUpdate:
+	make all && clear && ./$(TARGET)
 
 clean:
 	rm -rf *.o $(TARGET)

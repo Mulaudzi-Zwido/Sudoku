@@ -9,10 +9,18 @@
 #include <vector>
 #include <string>
 
+enum STATUS {
+    Won = 0,
+    Lost = 1,
+    Quit = 2
+};
+
 class Sudoku {
 private:
     int level {1};
     int errors{0};
+    sf::Time totalTime;
+    STATUS status;
 
     sf::Font font;
     std::vector<sf::Text> texts;
@@ -21,6 +29,7 @@ private:
     std::vector<std::vector<int>> boardValues;
     std::vector<std::vector<sf::RectangleShape>>blocks;
     std::vector<sf::VertexArray> boxLines;
+    std::vector<std::string> records;
 
     void generateBoard(); // Fills boardValues with the complete sudoku board values
     bool fillGrid();
@@ -38,6 +47,10 @@ public:
     ~Sudoku() = default;
     void printBoard(sf::RenderWindow& mainW); //Prints the sudoku board as an interactive window
     void setLevel(int lv);
+    int getLevel() const;
+    sf::Time getTime() const;
+    STATUS getStatus() const;
+    const std::vector<std::string>& getRecords();
 };
 
 #endif //SUDOKU_SUDOKU_H

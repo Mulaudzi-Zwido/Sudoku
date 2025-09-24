@@ -253,6 +253,18 @@ void Sudoku::generateBoard() {
     }
 }
 
+STATUS Sudoku::getStatus() const {
+    return status;
+}
+
+int Sudoku::getLevel() const {
+    return level;
+}
+
+const std::vector<std::string> &Sudoku::getRecords() {
+    return records;
+}
+
 void findEmptyCell(const std::vector<std::vector<int>>& board, int& row, int& col) {
     for (int i = 0; i < 9; ++i) {
         for (int j = 0; j < 9; ++j) {
@@ -340,9 +352,7 @@ bool Sudoku::userInput(const sf::RenderWindow& window) {
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num5)) {
                     if (correctNum(i,j, 5)) {
                         board[i][j] = 5;
-                        std::cout << "Correctly pressed: " << 5 << std::endl;
-                    } else {
-                        std::cout << "Incorrectly pressed: " << 5 << std::endl;
+                        return true;
                     }
                 }
                 else if (sf::Keyboard::isKeyPressed(sf::Keyboard::Num6)) {
@@ -376,6 +386,10 @@ bool Sudoku::userInput(const sf::RenderWindow& window) {
     return false;
 }
 
+sf::Time Sudoku::getTime() const {
+    return totalTime;
+}
+
 void Sudoku::printBoard(sf::RenderWindow &mainW) {
     sf::RenderWindow window(sf::VideoMode{800, 800}, "Sudoku");
 
@@ -391,10 +405,15 @@ void Sudoku::printBoard(sf::RenderWindow &mainW) {
     line.setPosition(window.getSize().x/8.0f, 0.0f);
     line.setCharacterSize(40);
     line.setFillColor(sf::Color::Black);
+
+    sf::Clock clock;
+
     while (window.isOpen()) {
         sf::Event gameEvent;
         while (window.pollEvent(gameEvent)) {
             if (gameEvent.type == sf::Event::Closed) {
+                totalTime = clock.getElapsedTime();
+                status = Quit;
                 mainW.setVisible(true);
                 window.close();
             } else if (gameEvent.type == sf::Event::KeyPressed) {
@@ -433,6 +452,8 @@ void Sudoku::printBoard(sf::RenderWindow &mainW) {
             resetBoard();
             auto delay = std::chrono::seconds(2);
             std::this_thread::sleep_for(delay);
+            totalTime = clock.getElapsedTime();
+            status = Lost;
             mainW.setVisible(true);
             window.close();
         }
@@ -457,6 +478,8 @@ void Sudoku::printBoard(sf::RenderWindow &mainW) {
             resetBoard();
             auto delay = std::chrono::seconds(2);
             std::this_thread::sleep_for(delay);
+            totalTime = clock.getElapsedTime();
+            status = Won;
             mainW.setVisible(true);
             window.close();
         }
