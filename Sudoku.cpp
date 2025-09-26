@@ -200,23 +200,23 @@ int cellsToRemove(int level) {
     int min, max;
 
     if (level <= 10) {
-        min = 45;
-        max = 49;
+        min = 32;
+        max = 36;
     } else if (level <= 20) {
+        min = 37;
+        max = 41;
+    } else if (level <= 30) {
         min = 40;
         max = 44;
-    } else if (level <= 30) {
-        min = 35;
-        max = 39;
     } else if (level <= 40) {
-        min = 30;
-        max = 34;
+        min = 45;
+        max = 49;
     } else if (level <= 47){
-        min = 25;
-        max = 29;
+        min = 50;
+        max = 54;
     } else {
-        min = 17;
-        max = 24;
+        min = 55;
+        max = 59;
     }
 
     std::uniform_int_distribution<int> dist(min, max);
@@ -259,10 +259,6 @@ STATUS Sudoku::getStatus() const {
 
 int Sudoku::getLevel() const {
     return level;
-}
-
-const std::vector<std::string> &Sudoku::getRecords() {
-    return records;
 }
 
 void findEmptyCell(const std::vector<std::vector<int>>& board, int& row, int& col) {
@@ -450,15 +446,13 @@ void Sudoku::printBoard(sf::RenderWindow &mainW) {
 
             window.display();
             resetBoard();
-            auto delay = std::chrono::seconds(2);
+            auto delay = std::chrono::seconds(1);
             std::this_thread::sleep_for(delay);
             totalTime = clock.getElapsedTime();
             status = Lost;
             mainW.setVisible(true);
             window.close();
-        }
-
-        if (board == boardValues) {
+        } else if (board == boardValues) {
             sf::Texture winTexture;
             winTexture.loadFromFile("Textures/win.png");
             sf::Sprite winImage;
@@ -476,10 +470,10 @@ void Sudoku::printBoard(sf::RenderWindow &mainW) {
 
             window.display();
             resetBoard();
-            auto delay = std::chrono::seconds(2);
+            auto delay = std::chrono::seconds(1);
             std::this_thread::sleep_for(delay);
             totalTime = clock.getElapsedTime();
-            status = Won;
+            status = Completed;
             mainW.setVisible(true);
             window.close();
         }

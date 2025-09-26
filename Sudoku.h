@@ -10,9 +10,9 @@
 #include <string>
 
 enum STATUS {
-    Won = 0,
-    Lost = 1,
-    Quit = 2
+    Lost = 0,
+    Quit = 1,
+    Completed = 2,
 };
 
 class Sudoku {
@@ -29,7 +29,6 @@ private:
     std::vector<std::vector<int>> boardValues;
     std::vector<std::vector<sf::RectangleShape>>blocks;
     std::vector<sf::VertexArray> boxLines;
-    std::vector<std::string> records;
 
     void generateBoard(); // Fills boardValues with the complete sudoku board values
     bool fillGrid();
@@ -50,7 +49,6 @@ public:
     int getLevel() const;
     sf::Time getTime() const;
     STATUS getStatus() const;
-    const std::vector<std::string>& getRecords();
 };
 
 #endif //SUDOKU_SUDOKU_H
